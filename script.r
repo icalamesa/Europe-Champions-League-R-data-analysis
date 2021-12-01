@@ -1,6 +1,7 @@
 rm(list = ls())
 
 library(dplyr)
+source("./utils.r")
 
 data <- read.csv("./europe-champions-league/2015-16/champs.csv",header = TRUE)
 
