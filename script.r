@@ -3,9 +3,12 @@ rm(list = ls())
 #utilities
 library(dplyr)
 library(stringr)
+library(ggplot2)
+library(scales)
 source("./utils.r")
 
-data <- read.csv("./europe-champions-league/2015-16/champs.csv",header = TRUE)
+
+data = read.csv("./europe-champions-league/2015-16/champs.csv",header = TRUE)
 
 dataset <- data.frame(data)
 
@@ -68,10 +71,75 @@ data.germany = germany.matches %>% transmute(
     str_detect(Team.2, "GER") ~ substr(str_trim(str_split(Team.1, "›", simplify = TRUE)[, 2]), 1, 3)
   )
 )
-
+all = rbind(data.spain, data.germany)
 #Spain
 mean(data.spain$Score)
 sd(data.spain$Score)
+
 #Germany
 mean(data.germany$Score)
 sd(data.germany$Score)
+
+
+
+#graphics
+
+#SPAIN
+x11()
+hist(data.spain$Score, col="skyblue", ylim=c(0,25), border=T, lwd=0.5,
+     main="Histograma de Goles en la Champions League equipos españoles", 
+     xlab="Goles por partido", 
+     ylab="Frecuencia",
+     labels=T)
+abline(v=mean(data.spain$Score),
+       col="dodgerblue3",
+       lty=2,
+       lwd=2)
+box()
+
+x11()
+hist(data.spain$Score, col="skyblue", border=T, lwd=0.5, freq=F,
+     main="Histograma de densidad de probabilidad de Goles en la Champions League equipos españoles", 
+     xlab="Goles por partido", 
+     ylab="Densidad",
+     labels=F)
+lines(density(data.spain$Score))
+polygon(density(data.spain$Score),
+        col=scales::alpha('skyblue',.35))
+
+
+#GERMANY
+
+x11()
+hist(data.germany$Score, col=scales::alpha('red',.35), ylim=c(0,25), border=T, lwd=0.5,
+     main="Histograma de Goles en la Champions League equipos españoles", 
+     xlab="Goles por partido", 
+     ylab="Frecuencia",
+     labels=T)
+abline(v=mean(data.germany$Score),
+       col="red",
+       lty=2,
+       lwd=2)
+box()
+
+x11()
+hist(data.germany$Score, col=scales::alpha('red',.35), border=T, lwd=0.5, freq=F,
+     main="Histograma de densidad de probabilidad de Goles en la Champions League equipos españoles", 
+     xlab="Goles por partido", 
+     ylab="Densidad",
+     labels=F)
+lines(density(data.germany$Score))
+polygon(density(data.germany$Score),
+        col=scales::alpha('red',.35))
+
+
+
+#Altogether
+
+x11()
+hist(data.germany$Score, col=scales::alpha('red',.35),border=T, add=T, lwd=0.5)
+box()
+legend("topright", c("España", "Alemania"), lwd=4, col=c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)))
+#all.data <- data.frame(rbind(p1, p2))
+#x11()
+#ggplot(all.data, aes(length, fill = Country)) + geom_density(alpha = 0.2)
