@@ -3,14 +3,20 @@ rm(list = ls())
 #utilities
 library(dplyr)
 library(stringr)
-library(ggplot2)
+#library(ggplot2)
 library(scales)
 source("./utils.r")
 
 
-data = read.csv("./europe-champions-league/2015-16/champs.csv",header = TRUE)
+#data = read.csv("./europe-",header = TRUE)
 
-dataset <- data.frame(data)
+
+file_list <- list.files("./matches_of_interest", pattern=".csv", full.names=T)
+
+
+dataset <- do.call("rbind", lapply(file_list, read.csv))
+
+#dataset <- data.frame(data)
 
 dataset = dataset %>% mutate(FT = str_trim(str_remove(dataset$FT, "\\(\\*\\)")), # Quita (*) y espacio en blanco
        score_Team.1 = as.numeric(str_split(FT, "-", simplify = TRUE)[, 1]),
@@ -86,7 +92,7 @@ sd(data.germany$Score)
 
 #SPAIN
 x11()
-hist(data.spain$Score, col="skyblue", ylim=c(0,25), border=T, lwd=0.5,
+hist(data.spain$Score, col="skyblue", border=T, lwd=0.5,
      main="Histograma de Goles en la Champions League equipos españoles", 
      xlab="Goles por partido", 
      ylab="Frecuencia",
@@ -111,8 +117,8 @@ polygon(density(data.spain$Score),
 #GERMANY
 
 x11()
-hist(data.germany$Score, col=scales::alpha('red',.35), ylim=c(0,25), border=T, lwd=0.5,
-     main="Histograma de Goles en la Champions League equipos españoles", 
+hist(data.germany$Score, col=scales::alpha('red',.35), border=T, lwd=0.5,
+     main="Histograma de Goles en la Champions League equipos alemanes", 
      xlab="Goles por partido", 
      ylab="Frecuencia",
      labels=T)
@@ -124,7 +130,7 @@ box()
 
 x11()
 hist(data.germany$Score, col=scales::alpha('red',.35), border=T, lwd=0.5, freq=F,
-     main="Histograma de densidad de probabilidad de Goles en la Champions League equipos españoles", 
+     main="Histograma de densidad de probabilidad de Goles en la Champions League equipos alemanes", 
      xlab="Goles por partido", 
      ylab="Densidad",
      labels=F)
@@ -137,9 +143,11 @@ polygon(density(data.germany$Score),
 #Altogether
 
 x11()
-hist(data.germany$Score, col=scales::alpha('red',.35),border=T, add=T, lwd=0.5)
+hist(data.germany$Score, col=scales::alpha('red',.35),border=T, lwd=0.5, 
+     main="Histograma de Goles en la Champions League equipos alemanes", 
+     xlab="Goles por partido", 
+     ylab="Frecuencia",
+     labels=T)
+hist(data.spain$Score, col=scales::alpha('red',.35), border=T, lwd=0.5, labels=T, add=T)
 box()
 legend("topright", c("España", "Alemania"), lwd=4, col=c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)))
-#all.data <- data.frame(rbind(p1, p2))
-#x11()
-#ggplot(all.data, aes(length, fill = Country)) + geom_density(alpha = 0.2)

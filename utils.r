@@ -2,7 +2,7 @@
 
 extract_results <- function(x, num)
 {
-  print(x)
+  #print(x)
   x_numbers <- regmatches(x, gregexpr("[[:digit:]]+", x))  # Apply gregexpr & regmatches
   ret = as.numeric(unlist(x_numbers))
   #this shall return an array of pairs.
