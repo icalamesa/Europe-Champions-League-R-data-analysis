@@ -12,8 +12,6 @@ source("./utils.r")
 
 
 file_list <- list.files("./matches_of_interest", pattern=".csv", full.names=T)
-
-
 dataset <- do.call("rbind", lapply(file_list, read.csv))
 
 #dataset <- data.frame(data)
@@ -108,7 +106,7 @@ hist(data.spain$Score, col="skyblue", border=T, lwd=0.5, freq=F,
      main="Histograma de densidad de probabilidad de Goles en la Champions League equipos españoles", 
      xlab="Goles por partido", 
      ylab="Densidad",
-     labels=F)
+     labels=T)
 lines(density(data.spain$Score))
 polygon(density(data.spain$Score),
         col=scales::alpha('skyblue',.35))
@@ -133,7 +131,7 @@ hist(data.germany$Score, col=scales::alpha('red',.35), border=T, lwd=0.5, freq=F
      main="Histograma de densidad de probabilidad de Goles en la Champions League equipos alemanes", 
      xlab="Goles por partido", 
      ylab="Densidad",
-     labels=F)
+     labels=T)
 lines(density(data.germany$Score))
 polygon(density(data.germany$Score),
         col=scales::alpha('red',.35))
@@ -143,11 +141,30 @@ polygon(density(data.germany$Score),
 #Altogether
 
 x11()
-hist(data.germany$Score, col=scales::alpha('red',.35),border=T, lwd=0.5, 
-     main="Histograma de Goles en la Champions League equipos alemanes", 
+hist(data.spain$Score, col=scales::alpha('skyblue',0.4),border=T, lwd=0.5, 
+     main="Histograma comparativo de Goles en la Champions League equipos alemanes vs españoles", 
      xlab="Goles por partido", 
      ylab="Frecuencia",
      labels=T)
-hist(data.spain$Score, col=scales::alpha('red',.35), border=T, lwd=0.5, labels=T, add=T)
-box()
-legend("topright", c("España", "Alemania"), lwd=4, col=c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)))
+hist(data.germany$Score, col=scales::alpha('red',0.4), border=T, lwd=0.5, labels=T, add=T)
+#box()
+legend("topright", c("España", "Alemania"), lwd=2, col=c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)))
+
+x11()
+hist(data.germany$Score, col=scales::alpha('red',0.4),border=T, lwd=0.5, freq=F,
+     main="Histograma comparativo de probabilidades Goles en la Champions League equipos alemanes vs españoles", 
+     xlab="Goles por partido", 
+     ylab="Frecuencia",
+     labels=T)
+hist(data.spain$Score, col=scales::alpha('skyblue',0.4), border=T, lwd=0.5, labels=T, add=T, freq=F)
+#box()
+legend("topright", c("España", "Alemania"), lwd=2, col=c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)))
+
+
+#sp <- hist(data.germany$Score, plot = FALSE)
+#de <- hist(data.spain$Score, plot=F)
+#sp
+#de
+
+#altura <- max(sp$density, de$density)
+#altura
