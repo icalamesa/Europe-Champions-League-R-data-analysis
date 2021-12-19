@@ -19,7 +19,7 @@ for (i in 1:length(processed_data))
 data_per_year = do.call("rbind", processed_data)
 
 
-#write.csv(x=data_per_year, file="data_per_year.csv")
+write.csv(x=data_per_year, file="data_per_year.csv")
 #graphics
 
 #SPAIN
