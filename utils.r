@@ -12,7 +12,7 @@ extract_results <- function(x, num)
 process_year <- function(dataset)
 {
   proc_res = filter(dataset,
-         grepl("ESP", Team.1) | grepl("ESP", Team.2) | grepl("GER", Team.1) | grepl("GER", Team.2))
+         (grepl("ESP", Team.1) | grepl("ESP", Team.2) | grepl("GER", Team.1) | grepl("GER", Team.2)) & (grepl("Group", Stage) & !grepl("2nd", Stage))  )
   proc_res = proc_res %>% mutate(FT = str_trim(str_remove(FT, "\\(\\*\\)")), # Quita (*) y espacio en blanco
                                  score_Team.1 = as.numeric(str_split(FT, "-", simplify = TRUE)[, 1]),
                                  score_Team.2 = as.numeric(str_split(FT, "-", simplify = TRUE)[, 2]),
