@@ -3,15 +3,15 @@ rm(list = ls())
 #utilities
 library(dplyr)
 library(stringr)
-#library(ggplot2)
+library(ggplot2)
 library(scales)
 source("./utils.r")
 
-
-#data = read.csv("./europe-",header = TRUE)
-
-
 file_list <- list.files("./matches_of_interest", pattern=".csv", full.names=T)
+df_list <- lapply(file_list, read.csv)
+processed_data <- lapply(df_list, process_year)
+
+
 dataset <- do.call("rbind", lapply(file_list, read.csv))
 
 #dataset <- data.frame(data)
