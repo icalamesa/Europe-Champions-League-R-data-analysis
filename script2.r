@@ -37,9 +37,9 @@ for (i in 1:length(processed_data))
 #Stacking dataframes
 data_per_year = do.call("rbind", processed_data)
 puntos = c(10,
-           9,
-           11, 
-           7 ,
+           5,
+           6, 
+           8 ,
            10,
            9, 
            13, 
@@ -201,110 +201,57 @@ germany_group.data = merge(germany_group.data, germany.points_means, by="Year")
 #  theme(legend.position="top")
 
 x11()
-ggplot(data = all, aes(x=Score))
-
-x11()
 ggplot(data = data_per_year,aes(y = Score, x = Year, color=Country)) +
   geom_point(size=3)+
   geom_hline(yintercept=mean(spain.data$Score), color=scales::alpha('red',.35), size=1)+
   geom_hline(yintercept=mean(germany.data$Score), color="skyblue", size=1) +
-  ggtitle("Goles")
+  ggtitle("Goles por equipos agrupados por país distribuido por años.") +
+  labs(x="Año", y="Goles")
 ggsave("Goals per Country.png", path="./plots")
 
 x11()
 # linear trend + confidence interval
 ggplot(data=data_per_year, aes(x=Score, y=Points, color=Country)) +
+ggtitle("Relación entre goles y puntos obtenidos por equipo, agrupados por país") +
 geom_point(size = 4) +
-geom_smooth(method=lm , color="red", fill="#69b3a2", se=T)
-ggsave("Relation Score and total Points.png", path="./plots")
+geom_smooth(method=lm ,  se=T)+
+  labs(x="Goles", y="Puntos")
+ggsave("Relation Score and total Points per team.png", path="./plots")
+
+x11()
+# linear trend + confidence interval
+ggplot(data=data_per_year, aes(x=Score, y=Points, color=Country)) +
+  geom_point(size = 4) +
+  ggtitle("Relación global entre goles y puntos obtenidos por equipo, agrupados por país") +
+  geom_smooth(method=lm , color="red", fill="#69b3a2", se=T)
+ggsave("Relation Score and total Points per team global.png", path="./plots")
 
 
 x11()
-ggplot(all, aes(x = Score, fill=Country)) + 
-  geom_bar(aes(y = ..prop.. , group = Country), width=0.7, position=position_dodge(width=0.75), stat="identity") +
-  scale_y_continuous(labels = percent)
+ggplot(all, aes(Score, group = Country)) + 
+  geom_bar(aes(y = ..prop.., fill = Country)) +
+  ggtitle("Distribución de goles por partido, separado por país/liga de origen") +
+  scale_y_continuous(labels=scales::percent) +
+  ylab("Frecuencia relativa") +
+  xlab("Goles")+
+  facet_grid(~Country)
+ggsave("Goals distribution per match.png", path="./plots")
 
+#datos
 
+#por partido
+t.test(spain.data$Score, germany.data$Score, var.equal=TRUE)
+#por liguilla
+t.test(spain_group.data$Mean, germany_group.data$Mean, var.equal=TRUE)
 
+#Correlación global entre goles y puntos
+cor(data_per_year$Score, data_per_year$Points)
+
+#Correlación entre goles y puntos España
+cor(spain.data$Score, spain.data$Points)
+
+#Correlación entre goles y puntos Alemania
+cor(germany.data$Score, germany.data$Points)
+
+rm(spain.sd_col, spain.points_means, spain.means_col, germany.means_col, germany.points_means, germany.sd_col)
 #graphics
-if (FALSE){
-#SPAIN
-x11()
-hist(data.spain$Score, col="skyblue", border=T, lwd=0.5,
-     main="Histograma de Goles en la Champions League equipos españoles", 
-     xlab="Goles por partido", 
-     ylab="Frecuencia",
-     labels=T)
-abline(v=mean(data.spain$Score),
-       col="dodgerblue3",
-       lty=2,
-       lwd=2)
-box()
-
-x11()
-hist(data.spain$Score, col="skyblue", border=T, lwd=0.5, freq=F,
-     main="Histograma de densidad de probabilidad de Goles en la Champions League equipos españoles", 
-     xlab="Goles por partido", 
-     ylab="Densidad",
-     labels=T)
-lines(density(data.spain$Score))
-polygon(density(data.spain$Score),
-        col=scales::alpha('skyblue',.35))
-
-
-#GERMANY
-
-x11()
-hist(data.germany$Score, col=scales::alpha('red',.35), border=T, lwd=0.5,
-     main="Histograma de Goles en la Champions League equipos alemanes", 
-     xlab="Goles por partido", 
-     ylab="Frecuencia",
-     labels=T)
-abline(v=mean(data.germany$Score),
-       col="red",
-       lty=2,
-       lwd=2)
-box()
-
-x11()
-hist(data.germany$Score, col=scales::alpha('red',.35), border=T, lwd=0.5, freq=F,
-     main="Histograma de densidad de probabilidad de Goles en la Champions League equipos alemanes", 
-     xlab="Goles por partido", 
-     ylab="Densidad",
-     labels=T)
-lines(density(data.germany$Score))
-polygon(density(data.germany$Score),
-        col=scales::alpha('red',.35))
-
-
-
-#Altogether
-
-x11()
-hist(data.spain$Score, col=scales::alpha('skyblue',0.4),border=T, lwd=0.5, 
-     main="Histograma comparativo de Goles en la Champions League equipos alemanes vs españoles", 
-     xlab="Goles por partido", 
-     ylab="Frecuencia",
-     labels=T)
-hist(data.germany$Score, col=scales::alpha('red',0.4), border=T, lwd=0.5, labels=T, add=T)
-#box()
-legend("topright", c("España", "Alemania"), lwd=2, col=c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)))
-
-x11()
-hist(data.germany$Score, col=scales::alpha('red',0.4),border=T, lwd=0.5, freq=F,
-     main="Histograma comparativo de probabilidades Goles en la Champions League equipos alemanes vs españoles", 
-     xlab="Goles por partido", 
-     ylab="Frecuencia",
-     labels=T)
-hist(data.spain$Score, col=scales::alpha('skyblue',0.4), border=T, lwd=0.5, labels=T, add=T, freq=F)
-#box()
-legend("topright", c("España", "Alemania"), lwd=2, col=c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)))
-}
-
-#sp <- hist(data.germany$Score, plot = FALSE)
-#de <- hist(data.spain$Score, plot=F)
-#sp
-#de
-
-#altura <- max(sp$density, de$density)
-#altura
